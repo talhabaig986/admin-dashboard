@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Dashboard</title>
+<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1828/1828859.png">
+<style>
+  *{ box-sizing: border-box; } /* border padding ko andar rakhega */
+  body{ margin: 0; /* bahar ka gap khatam */
+    font-family: Arial; /* likhai style */
+    background-color: #f2f2f2; /* halka grey background */
+    height: 100vh; /* poori screen ki height */
+    overflow: hidden; /* scroll band */
+    display: flex; flex-direction: column; } /* upar neeche layout */
+
+  .wrapper{ display: flex; /* sidebar + main side by side */
+    height: calc(100vh - 62px); /* top ko minus karke bachi height */
+    overflow: hidden; flex: 1; } /* bachi jagah le lega */
+
+  .main{ flex: 1; /* bachi hui poori width */
+    padding: 20px 30px 30px 30px; /* andar se gap - neeche zyada */
+    height: 100%; overflow-y: auto; /* FIX - neeche scroll chalega, content nahi katega */
+    display: flex; flex-direction: column; } /* upar neeche */
+
+  h1{ margin-top: 0; margin-bottom: 15px; } /* heading ka gap */
+
+  /* TOP BAR */
+  .top{ background-color: #2c3e50; /* dark blue */
+    color: white; /* likhai white */
+    padding: 10px 20px; /* andar gap */
+    font-size: 22px; font-weight: bold; /* bara mota text */
+    display: flex; justify-content: space-between; /* dono kono pe */
+    align-items: center; /* beech me */
+    height: 62px; flex-shrink: 0; } /* height fix */
+
+  .admin-img-top{ width: 42px; height: 42px; /* photo size */
+    border-radius: 50%; /* gol photo */
+    background: white; padding: 2px; } /* white border */
+
+  /* SIDEBAR */
+  .sidebar{ background-color: #34495e; /* sidebar color */
+    width: 200px; /* chaudai */
+    height: 100%; /* poori height */
+    display: flex; flex-direction: column; /* upar neeche */
+    padding-top: 10px; overflow: hidden; flex-shrink: 0; } /* sikurna band */
+
+  .sidebar a{ display: block; /* poori line */
+    color: white; text-decoration: none; /* underline khatam */
+    padding: 18px 15px; /* andar gap */
+    font-size: 18px; /* likhai size */
+    border-bottom: 1px solid #3d5a73; /* neeche line */
+    transition: 0.3s; } /* halka animation */
+
+  .sidebar a:hover{ background-color: #2c3e50; /* hover pe dark */
+    padding-left: 25px; /* hover pe aage */
+    border-left: 4px solid #3498db; } /* neeli line */
+
+  .logout-btn{ background-color: #7b1a1a !important; /* laal */
+    color: white; margin: auto 20px 15px 20px !important; /* neeche chipka */
+    padding: 12px !important; text-align: center; /* beech me */
+    display: block; text-decoration: none; font-size: 18px;
+    border-radius: 6px; /* gol kone */
+    border-bottom: none !important; border-left: none !important; }
+
+  .sidebar a.logout-btn:hover{ background-color: #FF0000 !important; /* hover pe photo wala bright red */
+    padding-left: 12px !important; border-left: none !important; transform: none !important; }
+
+  /* CARDS - 3 UPAR, 2 NEECHE */
+  .cards{ display: grid; /* grid layout */
+    grid-template-columns: repeat(3, 1fr); /* 3 barabar column */
+    gap: 15px; } /* box ke beech gap */
+
+  .card{ background-color: white; /* white box */
+    padding: 18px; border-radius: 8px; /* gol kone */
+    box-shadow: 0 2px 8px #ccc; /* halka saya */
+    transition: 0.3s; cursor: pointer; } /* haath wala cursor */
+
+  .card:hover{ transform: translateY(-5px); /* hover pe upar */
+    box-shadow: 0 8px 20px #aaa; } /* saya gehra */
+
+  .card b{ font-size: 19px; } /* card ka naam */
+  .card h2{ color: #2c3e50; margin: 10px 0 0 0; } /* card ka number */
+
+  /* TABLE BOX */
+  .box{ background-color: white; padding: 20px; /* andar gap */
+    border-radius: 8px; margin-top: 20px; /* upar se gap */
+    box-shadow: 0 2px 8px #ccc; flex-shrink: 0; /* FIX - ye dabba sikrega nahi, poora dikhega */
+    overflow: visible; } /* FIX - table katenga nahi */
+
+  table{ width: 100%; /* poori chaudai */
+    border-collapse: collapse; /* double line khatam */
+    margin-top: 10px; }
+  th, td{ border: 1px solid #ddd; /* halki line */
+    padding: 10px; text-align: left; } /* likhai left */
+  th{ background-color: #ecf0f1; } /* heading grey */
+  .pending{ color: #7a7a00; font-weight: bold; } /* peela */
+  .complete{ color: green; font-weight: bold; } /* hara */
+  .cancel{ color: red; font-weight: bold; } /* laal */
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top">
+  <span>Admin Dashboard</span>
+  <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="admin-img-top">
+</div>
+
+<div class="wrapper">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <a href="dashboard.html">🏠 Home</a>
+    <a href="orders.html">📦 Orders</a>
+    <a href="products.html">🛒 Products</a>
+    <a href="customers.html">👥 Customer</a>
+    <a href="settings.html">⚙️ Settings</a>
+    <a href="index.html" class="logout-btn">🚪 Logout</a>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <h1>Dashboard</h1>
+    <div class="cards">
+      <!-- UPAR 3 -->
+      <div class="card"><b>Total Order</b><h2>200</h2></div>
+      <div class="card"><b>Pending Order</b><h2>70</h2></div>
+      <div class="card"><b>Complete Order</b><h2>120</h2></div>
+      <!-- NEECHE 2 -->
+      <div class="card"><b>Total Products</b><h2>150+</h2></div>
+      <div class="card"><b>Total User</b><h2 id="users">Loading...</h2></div>
+      <!-- 6th KHALI -->
+    </div>
+
+    <!-- TABLE - SIRF 3 ORDERS -->
+    <div class="box">
+      <h2>Recent Orders</h2>
+      <table>
+        <tr><th>Order Id</th><th>Customer</th><th>Amount</th><th>Status</th></tr>
+        <tr><td>#101</td><td>Ali</td><td>$2000</td><td class="pending">Pending</td></tr>
+        <tr><td>#102</td><td>Omer</td><td>$200</td><td class="complete">Complete</td></tr>
+        <tr><td>#103</td><td>Saqib</td><td>$120</td><td class="cancel">Cancel</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- JAVASCRIPT -->
+<script type="module">
+    // firebase se cheezen mangwana - warna nahi chalega
+    import { db, collection, getDocs } from "./config/firebase_config.js";
+    // users wali jagah ko pakarna - jahan number dikhana hai
+    let users = document.getElementById('users')
+    // function - saara kaam iske andar hoga
+    async function getAllStats(){
+        // firebase me "users" folder ko kholna
+        const userRef = collection(db,"users")
+        // us folder ka saara data uthana - thora time lega
+        const data = await getDocs(userRef)
+        // gin ke number likh dena - 10 se zyada ho to 10+ likhna
+        users.innerText = data.docs.length > 10 ? "10+" : data.docs.length
+    }
+    // function ko chalana - warna kaam nahi hoga
+    getAllStats()
+</script>
+
+</body>
+</html>

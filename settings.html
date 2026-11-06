@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Settings</title>
+<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3524/3524636.png">
+<style>
+
+  /* ===== 1. POORA PAGE ===== */
+  *{ box-sizing: border-box; }
+  body{ margin: 0; font-family: Arial; background: #f2f2f2; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+  .wrapper{ display: flex; height: calc(100vh - 62px); overflow: hidden; flex: 1; }
+  .main{ flex: 1; padding: 20px 30px; height: 100%; overflow-y: auto; display: flex; flex-direction: column; }
+  h1{ margin-top: 0; margin-bottom: 15px; }
+
+  /* ===== 2. TOP BAR ===== */
+  .top{ background: #2c3e50; color: white; padding: 10px 20px; font-size: 22px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; height: 62px; flex-shrink: 0; }
+  .admin-img-top{ width: 42px; height: 42px; border-radius: 50%; background: white; padding: 2px; }
+
+  /* ===== 3. SIDEBAR ===== */
+  .sidebar{ background: #34495e; width: 200px; height: 100%; display: flex; flex-direction: column; padding-top: 10px; overflow: hidden; flex-shrink: 0; }
+  .sidebar a{ display: block; color: white; text-decoration: none; padding: 18px 15px; font-size: 18px; border-bottom: 1px solid #3d5a73; transition: 0.3s; }
+  .sidebar a:hover{ background: #2c3e50; padding-left: 25px; border-left: 4px solid #3498db; }
+  .active{ background: #2c3e50; border-left: 4px solid #3498db; }
+  .logout-btn{ background: #7b1a1a !important; color: white; margin: auto 20px 15px 20px !important; padding: 12px !important; text-align: center; display: block; text-decoration: none; font-size: 18px; border-radius: 6px; border-bottom: none !important; border-left: none !important; }
+  .logout-btn:hover{ background: red !important; padding-left: 12px !important; border-left: none !important; }
+
+  /* ===== 4. WHITE BOX ===== */
+  .box{ background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; margin-bottom: 20px; }
+  .box h2{ margin-top: 0; color: #1e3a5f; font-family: Georgia; }
+
+  /* ===== 5. FORM - INPUT ===== */
+  .row{ display: flex; gap: 15px; margin-bottom: 15px; }
+  .row input{ flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 15px; outline: none; }
+  textarea{ width: 100%; padding: 12px; border: 1px solid #777; border-radius: 10px; font-size: 14px; outline: none; height: 110px; }
+
+  /* ===== 6. NOTIFICATION + RED TEXT ===== */
+  .red{ color: red; font-size: 20px; }
+  .check{ display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 20px; }
+  .check input{ width: 16px; height: 16px; }
+
+  /* ===== 7. SAVE BUTTON ===== */
+  .save{ background: #2c3e50; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 18px; cursor: pointer; margin-bottom: 20px; }
+
+</style>
+</head>
+<body>
+
+<!-- ===== 1. TOP BAR ===== -->
+<div class="top">
+  <span>Admin Dashboard</span>
+  <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="admin-img-top">
+</div>
+
+<!-- ===== 2. WRAPPER START ===== -->
+<div class="wrapper">
+
+  <!-- ===== 3. SIDEBAR ===== -->
+  <div class="sidebar">
+    <a href="dashboard.html">🏠 Home</a>
+    <a href="orders.html">📦 Orders</a>
+    <a href="products.html">🛒 Products</a>
+    <a href="customers.html">👥 Customer</a>
+    <a href="settings.html" class="active">⚙️ Settings</a>
+    <a href="index.html" class="logout-btn">🚪 Logout</a>
+  </div>
+
+  <!-- ===== 4. MAIN START ===== -->
+  <div class="main">
+    <h1>Website Settings</h1>
+
+    <!-- 4.1 PROFILE SETTINGS -->
+    <div class="box">
+      <h2>Profile Settings</h2>
+      <div class="row">
+        <input type="text" placeholder="Admin Name">
+        <input type="email" placeholder="Admin Email">
+      </div>
+      <div class="row">
+        <input type="text" placeholder="Phone No">
+        <input type="text" placeholder="Location">
+      </div>
+    </div>
+
+    <!-- 4.2 WEBSITE SETTINGS -->
+    <div class="box">
+      <h2>Website Settings</h2>
+      <div class="row">
+        <input type="text" placeholder="Website Name">
+        <input type="text" placeholder="Website Url">
+      </div>
+      <div class="row">
+        <input type="text" placeholder="Description">
+        <input type="text" placeholder="Owner">
+      </div>
+    </div>
+
+    <!-- 4.3 NOTIFICATION -->
+    <div class="box">
+      <h2>Notification</h2>
+      <label class="check red"><input type="checkbox"> Email Notifications</label>
+      <label class="check red"><input type="checkbox"> SMS Notifications</label>
+      <label class="check red"><input type="checkbox"> System Update</label>
+    </div>
+
+    <!-- 4.4 TERMS & PRIVACY -->
+    <div class="box">
+      <h2>Term & Conditions ,Privacy Policy</h2>
+      <p class="red">Privacy Policy</p>
+      <textarea>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Earum at accusamus vitae delectus quas inventore officiis, sit incidunt, necessitatibus sapiente velit nobis beatae neque veritatis libero, doloribus vero. Blanditiis, cum?</textarea>
+      <p class="red">Terms & Conditions</p>
+      <textarea>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Earum at accusamus vitae delectus quas inventore officiis, sit incidunt, necessitatibus sapiente velit nobis beatae neque veritatis libero, doloribus vero. Blanditiis, cum?</textarea>
+    </div>
+
+    <!-- 4.5 SAVE BUTTON -->
+    <div>
+      <button class="save">Save All Changes</button>
+    </div>
+
+  </div>
+  <!-- ===== MAIN END ===== -->
+
+</div>
+<!-- ===== WRAPPER END ===== -->
+
+</body>
+</html>

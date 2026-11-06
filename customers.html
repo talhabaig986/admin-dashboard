@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Customers</title>
+<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+<style>
+
+  /* ye poore page ka style hai */
+  *{ box-sizing: border-box; }
+  body{ margin: 0; font-family: Arial; background: #f2f2f2; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+  .wrapper{ display: flex; height: calc(100vh - 62px); overflow: hidden; flex: 1; }
+  .main{ flex: 1; padding: 20px 30px; height: 100%; overflow-y: auto; display: flex; flex-direction: column; }
+  h1{ margin-top: 0; margin-bottom: 15px; }
+
+  /* ye upar wali neeli patti hai */
+  .top{ background: #2c3e50; color: white; padding: 10px 20px; font-size: 22px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; height: 62px; }
+  .admin-img-top{ width: 42px; height: 42px; border-radius: 50%; background: white; padding: 2px; }
+
+  /* ye side wala menu hai */
+  .sidebar{ transition: 0.3s;background: #34495e; width: 200px; height: 100%; display: flex; flex-direction: column; padding-top: 10px; }
+  .sidebar a{ transition: 0.3s;display: block; color: white; text-decoration: none; padding: 18px 15px; font-size: 18px; border-bottom: 1px solid #3d5a73; }
+  .sidebar a:hover{ transition: 0.3s;background: #2c3e50; padding-left: 25px; border-left: 4px solid #3498db; }
+  .active{ transition: 0.3s;background: #2c3e50; border-left: 4px solid #3498db; }
+  .logout-btn{ transition: 0.3s;background: #7b1a1a !important; color: white; margin: auto 20px 15px 20px !important; padding: 12px !important; text-align: center; display: block; text-decoration: none; font-size: 18px; border-radius: 6px; }
+
+/* ye sirf logout ke hover ka style hai - sirf red background hoga */
+.sidebar a.logout-btn:hover{ background: #FF0000 !important; padding-left: 12px !important; border-left: none !important; transform: none !important; }
+  /* ye search wala box hai */
+  .top-row{ display: flex; gap: 10px; margin-bottom: 15px; }
+  .top-row input{ flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; outline: none; }
+
+  /* ye white dabba hai jisme table hai */
+  .box{ background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; flex: 1; overflow-y: auto; }
+
+  /* ye table ka style hai - sab center me hai */
+  table{ width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th, td{ border: 1px solid #ddd; padding: 10px; text-align: center; }
+  th{ background: #ecf0f1; }
+  td img{ width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
+
+  /* ye button ka style hai */
+  .btn{ padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; color: white; font-size: 14px; }
+  .del{ background: #e74c3c; }
+
+</style>
+</head>
+<body>
+
+<!-- upar wali patti -->
+<div class="top">
+  <span>Customers</span>
+  <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="admin-img-top">
+</div>
+
+<!-- neeche wala hissa -->
+<div class="wrapper">
+
+  <!-- side menu -->
+  <div class="sidebar">
+    <a href="dashboard.html">🏠 Home</a>
+    <a href="orders.html">📦 Orders</a>
+    <a href="products.html">🛒 Products</a>
+    <a href="customers.html" class="active">👥 Customer</a>
+    <a href="settings.html">⚙️ Settings</a>
+    <a href="index.html" class="logout-btn">🚪 Logout</a>
+  </div>
+
+  <!-- beech wala hissa -->
+  <div class="main">
+    <h1>All Customers <span id="count"></span></h1>
+
+    <!-- search box -->
+    <div class="top-row">
+      <input type="text" id="search" placeholder="Search customer..." onkeyup="searchCustomer()">
+    </div>
+
+    <!-- table wala dabba -->
+    <div class="box">
+      <table>
+        <tr><th>Photo</th><th>Name</th><th>Email</th><th>Contact No</th><th>Action</th></tr>
+        <!-- yahan firebase se customers ayenge -->
+        <tbody id="customerTable">
+          <tr><td colspan="5" style="text-align:center;">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- yahan se firebase wala kaam shuru hai -->
+<script type="module">
+
+  // ye firebase ki file hai, jahan se db aa raha hai
+  import { db } from "./config/firebase_config.js";
+
+  // ye firebase se data lane ke liye chahiye
+  import { collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
+
+  // ye table ko pakar raha hai
+  const table = document.getElementById("customerTable");
+
+  // ye function customers ko firebase se laega
+  async function loadCustomers(){
+
+    // pehle table ko khali karo
+    table.innerHTML = "";
+
+    // firebase me users wali copy se sab customers lao
+    const snapshot = await getDocs(collection(db, "users"));
+
+    // agar koi customer nahi mila to ye likh do
+    if(snapshot.empty){
+      table.innerHTML = "<tr><td colspan='5' style='text-align:center;'>No Customer Found</td></tr>";
+      return;
+    }
+
+    // ye loop hai, har customer ko ek ek karke lega
+    for(let userDoc of snapshot.docs){
+
+      // is customer ka data nikalo
+      let data = userDoc.data();
+
+      // photo nikalo
+      let photo = data.imageUrl;
+      // agar photo nahi hai to ye wali photo dikhao
+      if(!photo){
+        photo = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+      }
+
+      // naam nikalo
+      let name = data.name;
+      // agar naam nahi hai to No Name likh do
+      if(!name){
+        name = "No Name";
+      }
+
+      // number nikalo
+      let phone = data.contactNo;
+      // agar number nahi hai to --- likh do
+      if(!phone){
+        phone = "---";
+      }
+
+      // ab is customer ki row table me daal do
+      // delete button pe uski id de di hai
+      table.innerHTML += "<tr>" +
+        "<td><img src='" + photo + "'></td>" +
+        "<td>" + name + "</td>" +
+        "<td>" + data.email + "</td>" +
+        "<td>" + phone + "</td>" +
+        "<td><button class='btn del' onclick=\"deleteCustomer('" + userDoc.id + "')\">Delete</button></td>" +
+      "</tr>";
+
+    }
+
+    // upar likh do kitne customers hain
+    document.getElementById("count").innerHTML = "(" + snapshot.size + ")";
+  }
+
+  // ye delete button ka kaam hai
+window.deleteCustomer = async function(id){
+
+  // pehle pucho, pakka delete karna hai?
+  let pakka = confirm("Are you sure you want to delete this customer?");
+  if(pakka == false){
+    return;
+  }
+
+  // firebase se is customer ko delete karo
+  await deleteDoc(doc(db, "users", id));
+  alert("Customer deleted successfully");
+
+  // dobara customers lao
+  loadCustomers();
+}
+
+  // ye search box ka kaam hai
+  window.searchCustomer = function(){
+    // jo likha hai usko chhota kar ke pakdo
+    let val = document.getElementById("search").value.toLowerCase();
+    // table ki sari rows pakdo
+    let rows = document.querySelectorAll("#customerTable tr");
+    // har row ko check karo
+    for(let row of rows){
+      // agar row me wo lafz hai to dikhao, warna chhupao
+      if(row.innerText.toLowerCase().includes(val)){
+        row.style.display = "";
+      }else{
+        row.style.display = "none";
+      }
+    }
+  }
+
+  // page khulte hi customers lao
+  loadCustomers();
+
+</script>
+
+</body>
+</html>

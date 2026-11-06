@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Products</title>
+<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/679/679922.png">
+<style>
+
+  /* ===== 1. POORA PAGE ===== */
+  *{ box-sizing: border-box; }
+  body{ margin: 0; font-family: Arial; background: #f2f2f2; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+  .wrapper{ display: flex; height: calc(100vh - 62px); overflow: hidden; flex: 1; }
+
+  /* YAHAN FIX HAI - pehle hidden tha, ab auto hai */
+  .main{ flex: 1; padding: 20px 30px; height: 100%; overflow-y: auto; display: flex; flex-direction: column; }
+  h1{ margin-top: 0; margin-bottom: 15px; }
+
+  /* ===== 2. TOP BAR ===== */
+  .top{ background: #2c3e50; color: white; padding: 10px 20px; font-size: 22px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; height: 62px; flex-shrink: 0; }
+  .admin-img-top{ width: 42px; height: 42px; border-radius: 50%; background: white; padding: 2px; }
+
+  /* ===== 3. SIDEBAR ===== */
+  .sidebar{ background: #34495e; width: 200px; height: 100%; display: flex; flex-direction: column; padding-top: 10px; overflow: hidden; flex-shrink: 0; }
+  .sidebar a{ display: block; color: white; text-decoration: none; padding: 18px 15px; font-size: 18px; border-bottom: 1px solid #3d5a73; transition: 0.3s; }
+  .sidebar a:hover{ background: #2c3e50; padding-left: 25px; border-left: 4px solid #3498db; }
+  .active{ background: #2c3e50; border-left: 4px solid #3498db; }
+  .logout-btn{ background: #7b1a1a !important; color: white; margin: auto 20px 15px 20px !important; padding: 12px !important; text-align: center; display: block; text-decoration: none; font-size: 18px; border-radius: 6px; border-bottom: none !important; border-left: none !important; }
+  .logout-btn:hover{ background: red !important; padding-left: 12px !important; border-left: none !important; }
+
+  /* ===== 4. SEARCH + FILTER ===== */
+  .top-row{ display: flex; gap: 10px; margin-bottom: 15px; }
+  .top-row input{ flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; outline: none; }
+  .top-row select{ padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; }
+
+  /* ===== 5. WHITE BOX ===== */
+  /* YAHAN BHI FIX HAI - box ke andar scroll hoga */
+  .box{ background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; flex: 1; overflow-y: auto; }
+
+  /* ===== 6. TABLE ===== */
+  table{ width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th, td{ border: 1px solid #ddd; padding: 10px; text-align: left; }
+  th{ background: #ecf0f1; }
+  td img{ width: 60px; height: 60px; border-radius: 5px; }
+
+  /* ===== 7. BUTTON ===== */
+  .btn{ padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; color: white; font-size: 14px; }
+  .view{ background: #3498db; }
+  .del{ background: #e74c3c; }
+
+</style>
+</head>
+<body>
+
+<!-- ===== 1. TOP BAR ===== -->
+<div class="top">
+  <span>Products</span>
+  <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="admin-img-top">
+</div>
+
+<!-- ===== 2. WRAPPER START ===== -->
+<div class="wrapper">
+
+  <!-- ===== 3. SIDEBAR ===== -->
+  <div class="sidebar">
+    <a href="dashboard.html">🏠 Home</a>
+    <a href="orders.html">📦 Orders</a>
+    <a href="products.html" class="active">🛒 Products</a>
+    <a href="customers.html">👥 Customer</a>
+    <a href="settings.html">⚙️ Settings</a>
+    <a href="index.html" class="logout-btn">🚪 Logout</a>
+  </div>
+
+  <!-- ===== 4. MAIN START ===== -->
+  <div class="main">
+    <h1>All Products</h1>
+
+    <!-- 4.1 SEARCH -->
+    <div class="top-row">
+      <input type="text" placeholder="Search product...">
+      <select>
+        <option>All Category</option>
+        <option>Shoes</option>
+        <option>Clothes</option>
+        <option>Accessories</option>
+      </select>
+    </div>
+
+    <!-- 4.2 TABLE BOX -->
+    <div class="box">
+      <table>
+        <tr><th>Image</th><th>Name</th><th>Price</th><th>Stock</th><th>Action</th></tr>
+        <tr><td><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200"></td><td>Nike Shoes</td><td>$120</td><td>25</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
+        <tr><td><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200"></td><td>Smart Watch</td><td>$200</td><td>15</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
+        <tr><td><img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200"></td><td>T-Shirt</td><td>$25</td><td>50</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
+        <tr><td><img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=200"></td><td>Hand Bag</td><td>$85</td><td>20</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
+        <tr><td><img src="https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=200"></td><td>Sneakers</td><td>$95</td><td>30</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
+        <tr><td><img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=200"></td><td>Sunglasses</td><td>$45</td><td>40</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
+        <tr><td><img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=200"></td><td>Jacket</td><td>$150</td><td>10</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
+        <tr><td><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200"></td><td>Headphones</td><td>$70</td><td>18</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
+        <tr><td><img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=200"></td><td>Hoodie</td><td>$55</td><td>35</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
+      </table>
+    </div>
+
+  </div>
+  <!-- ===== MAIN END ===== -->
+
+</div>
+<!-- ===== WRAPPER END ===== -->
+
+</body>
+</html>

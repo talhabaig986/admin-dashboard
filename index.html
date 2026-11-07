@@ -109,10 +109,12 @@
 
 <script>
 function login(){
-  var email = document.getElementById("email").value;
-  var password = document.getElementById("password").value;
+  var email = document.getElementById("email").value.trim().toLowerCase();
+  var password = document.getElementById("password").value.trim();
 
   if(email == "admin@admin.com" && password == "admin@123"){
+    // Login yaad rakhna - taake Logout ka pata chale
+    sessionStorage.setItem("adminLoggedIn", "yes");
     alert("Login Successful!");
     window.location.href = "dashboard.html";
   }
@@ -120,6 +122,21 @@ function login(){
     document.getElementById("error").style.display = "block";
   }
 }
+
+// Enter dabane se bhi Login ho jayega
+document.getElementById("password").addEventListener("keyup", function(e){
+  if(e.key == "Enter"){
+    login();
+  }
+});
+
+// Likhte hi error chhupa do
+document.getElementById("email").addEventListener("input", function(){
+  document.getElementById("error").style.display = "none";
+});
+document.getElementById("password").addEventListener("input", function(){
+  document.getElementById("error").style.display = "none";
+});
 </script>
 
 </body>

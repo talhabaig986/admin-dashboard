@@ -8,12 +8,11 @@
 <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/679/679922.png">
 <style>
 
-  /* ===== 1. POORA PAGE ===== */
+  /* ===== 1. WHOLE PAGE ===== */
   *{ box-sizing: border-box; }
   body{ margin: 0; font-family: Arial; background: #f2f2f2; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
   .wrapper{ display: flex; height: calc(100vh - 62px); overflow: hidden; flex: 1; }
 
-  /* YAHAN FIX HAI - pehle hidden tha, ab auto hai */
   .main{ flex: 1; padding: 20px 30px; height: 100%; overflow-y: auto; display: flex; flex-direction: column; }
   h1{ margin-top: 0; margin-bottom: 15px; }
 
@@ -29,25 +28,36 @@
   .logout-btn{ background: #7b1a1a !important; color: white; margin: auto 20px 15px 20px !important; padding: 12px !important; text-align: center; display: block; text-decoration: none; font-size: 18px; border-radius: 6px; border-bottom: none !important; border-left: none !important; }
   .logout-btn:hover{ background: red !important; padding-left: 12px !important; border-left: none !important; }
 
-  /* ===== 4. SEARCH + FILTER ===== */
+  /* ===== 4. ADD + SEARCH ===== */
   .top-row{ display: flex; gap: 10px; margin-bottom: 15px; }
-  .top-row input{ flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; outline: none; }
-  .top-row select{ padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; }
+  .top-row input, .top-row select{ padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; outline: none; }
+  .top-row input{ flex: 1; }
+
+  /* Add Product box */
+  .add-box{ background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+  .add-box input, .add-box select{ padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; outline: none; flex: 1; min-width: 130px; }
+  .add-btn{ background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; }
+  .add-btn:hover{ background: #c0392b; }
 
   /* ===== 5. WHITE BOX ===== */
-  /* YAHAN BHI FIX HAI - box ke andar scroll hoga */
   .box{ background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; flex: 1; overflow-y: auto; }
 
   /* ===== 6. TABLE ===== */
   table{ width: 100%; border-collapse: collapse; margin-top: 10px; }
   th, td{ border: 1px solid #ddd; padding: 10px; text-align: left; }
   th{ background: #ecf0f1; }
-  td img{ width: 60px; height: 60px; border-radius: 5px; }
+  td img{ width: 60px; height: 60px; border-radius: 5px; object-fit: cover; }
 
   /* ===== 7. BUTTON ===== */
   .btn{ padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; color: white; font-size: 14px; }
   .view{ background: #3498db; }
   .del{ background: #e74c3c; }
+
+  /* ===== 8. NO PRODUCT MESSAGE ===== */
+  .no-data{ text-align: center; padding: 40px 10px; color: #777; display: none; }
+  .no-data .icon{ font-size: 40px; display: block; margin-bottom: 10px; }
+  .no-data h3{ color: #2c3e50; margin: 0 0 5px 0; font-size: 19px; }
+  .no-data p{ margin: 0; font-size: 15px; }
 
 </style>
 </head>
@@ -66,6 +76,7 @@
   <div class="sidebar">
     <a href="dashboard.html">🏠 Home</a>
     <a href="orders.html">📦 Orders</a>
+    <a href="category.html">🛍️ Category</a>
     <a href="products.html" class="active">🛒 Products</a>
     <a href="customers.html">👥 Customer</a>
     <a href="settings.html">⚙️ Settings</a>
@@ -76,31 +87,41 @@
   <div class="main">
     <h1>All Products</h1>
 
-    <!-- 4.1 SEARCH -->
+    <!-- Add Product Form -->
+    <div class="add-box">
+      <input type="text" id="pName" placeholder="Product Name">
+      <input type="number" id="pPrice" placeholder="Price">
+      <input type="number" id="pStock" placeholder="Stock">
+      <!-- Category Firebase se ayegi -->
+      <select id="pCategory"></select>
+      <input type="text" id="pImage" placeholder="Image Link (optional)">
+      <button class="add-btn" id="addBtn">Add Product</button>
+    </div>
+
+    <!-- Search + Filter -->
     <div class="top-row">
-      <input type="text" placeholder="Search product...">
-      <select>
-        <option>All Category</option>
-        <option>Shoes</option>
-        <option>Clothes</option>
-        <option>Accessories</option>
+      <input type="text" id="searchInput" placeholder="Search product...">
+      <select id="catFilter">
+        <option value="all">All Category</option>
       </select>
     </div>
 
-    <!-- 4.2 TABLE BOX -->
+    <!-- Table Box -->
     <div class="box">
-      <table>
-        <tr><th>Image</th><th>Name</th><th>Price</th><th>Stock</th><th>Action</th></tr>
-        <tr><td><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200"></td><td>Nike Shoes</td><td>$120</td><td>25</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
-        <tr><td><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200"></td><td>Smart Watch</td><td>$200</td><td>15</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
-        <tr><td><img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200"></td><td>T-Shirt</td><td>$25</td><td>50</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
-        <tr><td><img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=200"></td><td>Hand Bag</td><td>$85</td><td>20</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
-        <tr><td><img src="https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=200"></td><td>Sneakers</td><td>$95</td><td>30</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
-        <tr><td><img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=200"></td><td>Sunglasses</td><td>$45</td><td>40</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
-        <tr><td><img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=200"></td><td>Jacket</td><td>$150</td><td>10</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
-        <tr><td><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200"></td><td>Headphones</td><td>$70</td><td>18</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
-        <tr><td><img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=200"></td><td>Hoodie</td><td>$55</td><td>35</td><td><button class="btn view">Edit</button> <button class="btn del">Delete</button></td></tr>
+      <table id="productTable">
+        <thead>
+          <tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Action</th></tr>
+        </thead>
+        <tbody id="productList"></tbody>
       </table>
+
+      <!-- Jab koi product na ho -->
+      <div class="no-data" id="noData">
+        <span class="icon">🛒</span>
+        <h3>No Products Found</h3>
+        <p>No products have been added yet. Please add a new product to get started.</p>
+      </div>
+
     </div>
 
   </div>
@@ -108,6 +129,186 @@
 
 </div>
 <!-- ===== WRAPPER END ===== -->
+
+<script type="module">
+  // FIX - Ab dashboard wali hi config use hogi, dobara initialize nahi karenge
+  import { db, collection, getDocs, doc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "./config/firebase_config.js";
+
+  // ===== GET ALL INPUTS =====
+  let pName = document.getElementById("pName")
+  let pPrice = document.getElementById("pPrice")
+  let pStock = document.getElementById("pStock")
+  let pCategory = document.getElementById("pCategory")
+  let pImage = document.getElementById("pImage")
+  let addBtn = document.getElementById("addBtn")
+  let searchInput = document.getElementById("searchInput")
+  let catFilter = document.getElementById("catFilter")
+  let productList = document.getElementById("productList")
+  let productTable = document.getElementById("productTable")
+  let noData = document.getElementById("noData")
+
+  let editId = null // Edit ho raha hai to ID yahan hogi
+  let allProducts = [] // Saare products yahan save honge, search ke liye
+
+  addBtn.addEventListener("click", saveProduct)
+  searchInput.addEventListener("input", showProducts)
+  catFilter.addEventListener("change", showProducts)
+
+  // ===== 1. CATEGORY DROPDOWN BHARNA =====
+  // Category page wali categories yahan ayengi
+  async function loadCategories() {
+    let data = await getDocs(collection(db, "Category"))
+    pCategory.innerHTML = ""
+    catFilter.innerHTML = '<option value="all">All Category</option>'
+
+    // for...of loop - ek ek category ko dropdown me daalna
+    for (let row of data.docs) {
+      let name = row.data().categoryName
+      pCategory.innerHTML += `<option value="${name}">${name}</option>`
+      catFilter.innerHTML += `<option value="${name}">${name}</option>`
+    }
+  }
+
+  // ===== 2. PRODUCT ADD / UPDATE =====
+  async function saveProduct() {
+    let name = pName.value.trim()
+    let price = pPrice.value
+    let stock = pStock.value
+    let category = pCategory.value
+    let image = pImage.value.trim()
+
+    // Check - Khali to nahi hai
+    if (name == "" || price == "" || stock == "") {
+      alert("Please fill Name, Price and Stock")
+      return
+    }
+
+    // Agar image nahi di to default image
+    if (image == "") {
+      image = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200"
+    }
+
+    if (editId) {
+      // Edit Mode - Purana product update karo
+      await updateDoc(doc(db, "Products", editId), {
+        productName: name,
+        price: price,
+        stock: stock,
+        category: category,
+        image: image
+      })
+      editId = null
+      addBtn.innerText = "Add Product"
+    } else {
+      // Add Mode - Naya product banao
+      let newDoc = doc(collection(db, "Products"))
+      await setDoc(newDoc, {
+        productName: name,
+        price: price,
+        stock: stock,
+        category: category,
+        image: image,
+        productKey: newDoc.id,
+        createdAt: serverTimestamp() // Kab bana, iska time save hoga
+      })
+    }
+
+    // Form saaf karo
+    pName.value = ""
+    pPrice.value = ""
+    pStock.value = ""
+    pImage.value = ""
+
+    getProducts()
+  }
+
+  // ===== 3. FIREBASE SE SAARAY PRODUCTS LANA =====
+  async function getProducts() {
+    let data = await getDocs(collection(db, "Products"))
+    allProducts = []
+    // for...of loop - ek ek product ko list me daalna
+    for (let row of data.docs) {
+      allProducts.push({ id: row.id, ...row.data() })
+    }
+    showProducts()
+  }
+
+  // ===== 4. PRODUCTS TABLE ME DIKHANA + SEARCH + FILTER =====
+  function showProducts() {
+    let searchText = searchInput.value.toLowerCase()
+    let selectedCat = catFilter.value
+
+    // FIX - filter() ki jagah for...of loop se filter karna
+    let filtered = []
+    for (let p of allProducts) {
+      let nameMatch = p.productName.toLowerCase().indexOf(searchText) != -1
+      let catMatch = selectedCat == "all" || p.category == selectedCat
+      if (nameMatch && catMatch) {
+        filtered.push(p)
+      }
+    }
+
+    // Agar koi product nahi hai to message dikhao
+    if (filtered.length == 0) {
+      productTable.style.display = "none"
+      noData.style.display = "block"
+      productList.innerHTML = ""
+      return
+    }
+
+    productTable.style.display = "table"
+    noData.style.display = "none"
+    productList.innerHTML = ""
+
+    // for...of loop - ek ek product ko table me dikhana
+    for (let p of filtered) {
+      productList.innerHTML += `
+        <tr>
+          <td><img src="${p.image}"></td>
+          <td>${p.productName}</td>
+          <td>${p.category}</td>
+          <td>$${p.price}</td>
+          <td>${p.stock}</td>
+          <td>
+            <button class="btn view" onclick="editProduct('${p.id}')">Edit</button>
+            <button class="btn del" onclick="deleteProduct('${p.id}')">Delete</button>
+          </td>
+        </tr>`
+    }
+  }
+
+  // ===== 5. EDIT BUTTON =====
+  window.editProduct = function(id) {
+    // FIX - find() ki jagah for...of loop se dhoondna
+    let found = null
+    for (let item of allProducts) {
+      if (item.id == id) {
+        found = item
+        break
+      }
+    }
+    let p = found
+    pName.value = p.productName
+    pPrice.value = p.price
+    pStock.value = p.stock
+    pCategory.value = p.category
+    pImage.value = p.image
+    editId = id
+    addBtn.innerText = "Update Product"
+  }
+
+  // ===== 6. DELETE BUTTON =====
+  window.deleteProduct = async function(id) {
+    if (confirm("Are you sure you want to delete this product?")) {
+      await deleteDoc(doc(db, "Products", id))
+      getProducts()
+    }
+  }
+
+  // Page khulte hi Category aur Products load karo
+  loadCategories()
+  getProducts()
+</script>
 
 </body>
 </html>

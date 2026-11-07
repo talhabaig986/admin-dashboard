@@ -50,7 +50,7 @@
 
 <!-- ===== 1. TOP BAR ===== -->
 <div class="top">
-  <span>Admin Dashboard</span>
+  <span>Settings</span>
   <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="admin-img-top">
 </div>
 
@@ -61,6 +61,7 @@
   <div class="sidebar">
     <a href="dashboard.html">🏠 Home</a>
     <a href="orders.html">📦 Orders</a>
+    <a href="category.html">🛍️ Category</a>
     <a href="products.html">🛒 Products</a>
     <a href="customers.html">👥 Customer</a>
     <a href="settings.html" class="active">⚙️ Settings</a>
@@ -75,12 +76,12 @@
     <div class="box">
       <h2>Profile Settings</h2>
       <div class="row">
-        <input type="text" placeholder="Admin Name">
-        <input type="email" placeholder="Admin Email">
+        <input type="text" id="adminName" placeholder="Admin Name">
+        <input type="email" id="adminEmail" placeholder="Admin Email">
       </div>
       <div class="row">
-        <input type="text" placeholder="Phone No">
-        <input type="text" placeholder="Location">
+        <input type="text" id="phoneNo" placeholder="Phone No">
+        <input type="text" id="location" placeholder="Location">
       </div>
     </div>
 
@@ -88,35 +89,35 @@
     <div class="box">
       <h2>Website Settings</h2>
       <div class="row">
-        <input type="text" placeholder="Website Name">
-        <input type="text" placeholder="Website Url">
+        <input type="text" id="websiteName" placeholder="Website Name">
+        <input type="text" id="websiteUrl" placeholder="Website Url">
       </div>
       <div class="row">
-        <input type="text" placeholder="Description">
-        <input type="text" placeholder="Owner">
+        <input type="text" id="description" placeholder="Description">
+        <input type="text" id="owner" placeholder="Owner">
       </div>
     </div>
 
     <!-- 4.3 NOTIFICATION -->
     <div class="box">
       <h2>Notification</h2>
-      <label class="check red"><input type="checkbox"> Email Notifications</label>
-      <label class="check red"><input type="checkbox"> SMS Notifications</label>
-      <label class="check red"><input type="checkbox"> System Update</label>
+      <label class="check red"><input type="checkbox" id="emailNoti"> Email Notifications</label>
+      <label class="check red"><input type="checkbox" id="smsNoti"> SMS Notifications</label>
+      <label class="check red"><input type="checkbox" id="systemNoti"> System Update</label>
     </div>
 
     <!-- 4.4 TERMS & PRIVACY -->
     <div class="box">
       <h2>Term & Conditions ,Privacy Policy</h2>
       <p class="red">Privacy Policy</p>
-      <textarea>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Earum at accusamus vitae delectus quas inventore officiis, sit incidunt, necessitatibus sapiente velit nobis beatae neque veritatis libero, doloribus vero. Blanditiis, cum?</textarea>
+      <textarea id="privacyPolicy">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Earum at accusamus vitae delectus quas inventore officiis, sit incidunt, necessitatibus sapiente velit nobis beatae neque veritatis libero, doloribus vero. Blanditiis, cum?</textarea>
       <p class="red">Terms & Conditions</p>
-      <textarea>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Earum at accusamus vitae delectus quas inventore officiis, sit incidunt, necessitatibus sapiente velit nobis beatae neque veritatis libero, doloribus vero. Blanditiis, cum?</textarea>
+      <textarea id="terms">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Earum at accusamus vitae delectus quas inventore officiis, sit incidunt, necessitatibus sapiente velit nobis beatae neque veritatis libero, doloribus vero. Blanditiis, cum?</textarea>
     </div>
 
     <!-- 4.5 SAVE BUTTON -->
     <div>
-      <button class="save">Save All Changes</button>
+      <button class="save" id="saveBtn">Save All Changes</button>
     </div>
 
   </div>
@@ -124,6 +125,85 @@
 
 </div>
 <!-- ===== WRAPPER END ===== -->
+
+<script type="module">
+  // Firebase se connect - baaki pages wali hi config
+  import { db, doc, getDoc, setDoc } from "./config/firebase_config.js";
+
+  // Saare inputs ko pakarna
+  let adminName = document.getElementById("adminName")
+  let adminEmail = document.getElementById("adminEmail")
+  let phoneNo = document.getElementById("phoneNo")
+  let locationInput = document.getElementById("location")
+  let websiteName = document.getElementById("websiteName")
+  let websiteUrl = document.getElementById("websiteUrl")
+  let description = document.getElementById("description")
+  let owner = document.getElementById("owner")
+  let emailNoti = document.getElementById("emailNoti")
+  let smsNoti = document.getElementById("smsNoti")
+  let systemNoti = document.getElementById("systemNoti")
+  let privacyPolicy = document.getElementById("privacyPolicy")
+  let terms = document.getElementById("terms")
+  let saveBtn = document.getElementById("saveBtn")
+
+  // Settings ka ek hi document hoga - "settings" collection me "website" naam se
+  let settingsRef = doc(db, "settings", "website")
+
+  // 1. PAGE KHULTE HI PURANI SETTINGS LOAD KARNA
+  async function loadSettings(){
+    let snap = await getDoc(settingsRef)
+    if(snap.exists() == false){
+      return
+    }
+    let d = snap.data()
+
+    // for...of loop - saare text inputs ko ek ek karke bharna
+    let fields = [
+      { input: adminName, value: d.adminName },
+      { input: adminEmail, value: d.adminEmail },
+      { input: phoneNo, value: d.phoneNo },
+      { input: locationInput, value: d.location },
+      { input: websiteName, value: d.websiteName },
+      { input: websiteUrl, value: d.websiteUrl },
+      { input: description, value: d.description },
+      { input: owner, value: d.owner },
+      { input: privacyPolicy, value: d.privacyPolicy },
+      { input: terms, value: d.terms }
+    ]
+    for(let f of fields){
+      if(f.value){
+        f.input.value = f.value
+      }
+    }
+
+    // Checkboxes
+    emailNoti.checked = d.emailNoti == true
+    smsNoti.checked = d.smsNoti == true
+    systemNoti.checked = d.systemNoti == true
+  }
+
+  // 2. SAVE BUTTON - Sab kuch Firebase me save karna
+  saveBtn.addEventListener("click", async function(){
+    await setDoc(settingsRef, {
+      adminName: adminName.value,
+      adminEmail: adminEmail.value,
+      phoneNo: phoneNo.value,
+      location: locationInput.value,
+      websiteName: websiteName.value,
+      websiteUrl: websiteUrl.value,
+      description: description.value,
+      owner: owner.value,
+      emailNoti: emailNoti.checked,
+      smsNoti: smsNoti.checked,
+      systemNoti: systemNoti.checked,
+      privacyPolicy: privacyPolicy.value,
+      terms: terms.value
+    })
+    alert("Settings Saved Successfully!")
+  })
+
+  loadSettings()
+</script>
 
 </body>
 </html>

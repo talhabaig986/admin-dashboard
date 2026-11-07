@@ -87,7 +87,7 @@
   .box{ background-color: white; padding: 20px; /* andar gap */
     border-radius: 8px; /* gol kone */
     box-shadow: 0 2px 8px #ccc; /* halka saya */
-    flex: 1; overflow: hidden; } /* bachi jagah */
+    flex: 1; overflow-y: auto; } /* bachi jagah + scroll */
 
   table{ width: 100%; /* poori chaudai */
     border-collapse: collapse; /* double line khatam */
@@ -120,6 +120,7 @@
   <div class="sidebar">
     <a href="dashboard.html">🏠 Home</a>
     <a href="orders.html" class="active">📦 Orders</a>
+    <a href="category.html">🛍️ Category</a>
     <a href="products.html">🛒 Products</a>
     <a href="customers.html">👥 Customer</a>
     <a href="settings.html">⚙️ Settings</a>
@@ -132,28 +133,108 @@
 
     <!-- SEARCH + FILTER -->
     <div class="top-row">
-      <input type="text" placeholder="Search order / customer...">
-      <select>
-        <option>All Status</option>
-        <option>Pending</option>
-        <option>Complete</option>
-        <option>Cancel</option>
+      <input type="text" id="searchInput" placeholder="Search order / customer..." onkeyup="showOrders()">
+      <select id="statusFilter" onchange="showOrders()">
+        <option value="All">All Status</option>
+        <option value="Pending">Pending</option>
+        <option value="Complete">Complete</option>
+        <option value="Cancel">Cancel</option>
       </select>
     </div>
 
     <!-- TABLE -->
     <div class="box">
       <table>
-        <tr><th>Order Id</th><th>Customer</th><th>Product</th><th>Amount</th><th>Status</th><th>Action</th></tr>
-        <tr><td>#101</td><td>Ali</td><td>Shoes</td><td>$2000</td><td class="pending">Pending</td><td><button class="btn view">View</button> <button class="btn del">Delete</button></td></tr>
-        <tr><td>#102</td><td>Omer</td><td>Watch</td><td>$200</td><td class="complete">Complete</td><td><button class="btn view">View</button> <button class="btn del">Delete</button></td></tr>
-        <tr><td>#103</td><td>Saqib</td><td>Shirt</td><td>$120</td><td class="cancel">Cancel</td><td><button class="btn view">View</button> <button class="btn del">Delete</button></td></tr>
-        <tr><td>#104</td><td>Ahmed</td><td>Bag</td><td>$350</td><td class="pending">Pending</td><td><button class="btn view">View</button> <button class="btn del">Delete</button></td></tr>
-        <tr><td>#105</td><td>Bilal</td><td>Cap</td><td>$80</td><td class="complete">Complete</td><td><button class="btn view">View</button> <button class="btn del">Delete</button></td></tr>
+        <thead>
+          <tr><th>Order Id</th><th>Customer</th><th>Product</th><th>Amount</th><th>Status</th><th>Action</th></tr>
+        </thead>
+        <tbody id="orderTable">
+          <tr><td colspan="6" style="text-align:center;">Loading...</td></tr>
+        </tbody>
       </table>
     </div>
   </div>
 </div>
+
+<script type="module">
+  // firebase se cheezen mangwana
+  import { db, collection, getDocs, doc, deleteDoc } from "./config/firebase_config.js";
+
+  // saare orders yahan save karenge - taake search/filter bina dobara firebase khole chale
+  let allOrders = []
+
+  // 1. FIREBASE SE ORDERS LANA
+  async function getOrders(){
+    let orderRef = collection(db, "orders")
+    let orderData = await getDocs(orderRef)
+
+    allOrders = []
+    // for...of loop - ek ek order ko list me daalna
+    for(let order of orderData.docs){
+      let d = order.data()
+      allOrders.push({
+        id: order.id,
+        customer: d.customerName || d.customer || d.name || "Customer",
+        product: d.productName || d.product || d.item || "Product",
+        amount: d.total || d.amount || d.price || 0,
+        status: d.status || "Pending"
+      })
+    }
+    showOrders()
+  }
+
+  // 2. TABLE ME DIKHANA + SEARCH + FILTER
+  window.showOrders = function(){
+    let search = document.getElementById("searchInput").value.toLowerCase()
+    let filter = document.getElementById("statusFilter").value
+    let table = document.getElementById("orderTable")
+    let html = ""
+
+    // for...of loop - ek ek order ko check karna
+    for(let o of allOrders){
+      // SEARCH CHECK - customer ya id me likha hua hai ya nahi
+      if(search != "" && o.customer.toLowerCase().indexOf(search) == -1 && o.id.toLowerCase().indexOf(search) == -1){
+        continue
+      }
+      // FILTER CHECK - status match karta hai ya nahi
+      if(filter != "All" && o.status.toLowerCase() != filter.toLowerCase()){
+        continue
+      }
+
+      // status ka color class
+      let cls = "pending"
+      if(o.status.toLowerCase() == "complete" || o.status.toLowerCase() == "completed") cls = "complete"
+      if(o.status.toLowerCase() == "cancel" || o.status.toLowerCase() == "cancelled") cls = "cancel"
+
+      html = html + "<tr><td>#" + o.id.slice(0,5) + "</td><td>" + o.customer + "</td><td>" + o.product + "</td><td>$" + o.amount + "</td><td class='" + cls + "'>" + o.status + "</td><td><button class='btn view' onclick=\"viewOrder('" + o.id + "')\">View</button> <button class='btn del' onclick=\"deleteOrder('" + o.id + "')\">Delete</button></td></tr>"
+    }
+
+    if(html == ""){
+      html = "<tr><td colspan='6' style='text-align:center;'>No orders found</td></tr>"
+    }
+    table.innerHTML = html
+  }
+
+  // 3. VIEW BUTTON - order ki detail dikhana
+  window.viewOrder = function(id){
+    for(let o of allOrders){
+      if(o.id == id){
+        alert("Order: #" + o.id.slice(0,5) + "\nCustomer: " + o.customer + "\nProduct: " + o.product + "\nAmount: $" + o.amount + "\nStatus: " + o.status)
+        break
+      }
+    }
+  }
+
+  // 4. DELETE BUTTON - firebase se delete karna
+  window.deleteOrder = async function(id){
+    if(confirm("Delete this order?")){
+      await deleteDoc(doc(db, "orders", id))
+      getOrders()
+    }
+  }
+
+  getOrders()
+</script>
 
 </body>
 </html>

@@ -1,6 +1,6 @@
 // config/firebase_config.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-database.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
 
@@ -18,4 +18,6 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const rtdb = getDatabase(app);
 export const auth = getAuth(app);
-export { collection, getDocs, ref, get };
+
+// Sirf 1 baar export - sab kuch isi me hai
+export { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc, serverTimestamp, ref, get };

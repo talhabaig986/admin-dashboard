@@ -67,7 +67,7 @@
   .sidebar a.logout-btn:hover{ background-color: #FF0000 !important; /* hover pe photo wala bright red */
     padding-left: 12px !important; border-left: none !important; transform: none !important; }
 
-  /* CARDS - 3 UPAR, 2 NEECHE */
+  /* CARDS - 3 UPAR, 3 NEECHE */
   .cards{ display: grid; /* grid layout */
     grid-template-columns: repeat(3, 1fr); /* 3 barabar column */
     gap: 15px; } /* box ke beech gap */
@@ -113,6 +113,7 @@
   <div class="sidebar">
     <a href="dashboard.html">🏠 Home</a>
     <a href="orders.html">📦 Orders</a>
+    <a href="category.html">🛍️ Category</a>
     <a href="products.html">🛒 Products</a>
     <a href="customers.html">👥 Customer</a>
     <a href="settings.html">⚙️ Settings</a>
@@ -124,23 +125,21 @@
     <h1>Dashboard</h1>
     <div class="cards">
       <!-- UPAR 3 -->
-      <div class="card"><b>Total Order</b><h2>200</h2></div>
-      <div class="card"><b>Pending Order</b><h2>70</h2></div>
-      <div class="card"><b>Complete Order</b><h2>120</h2></div>
-      <!-- NEECHE 2 -->
-      <div class="card"><b>Total Products</b><h2>150+</h2></div>
+      <div class="card"><b>Total Order</b><h2 id="totalOrders">Loading...</h2></div>
+      <div class="card"><b>Pending Order</b><h2 id="pendingOrders">Loading...</h2></div>
+      <div class="card"><b>Complete Order</b><h2 id="completeOrders">Loading...</h2></div>
+      <!-- NEECHE 3 -->
+      <div class="card"><b>Total Products</b><h2 id="totalProducts">Loading...</h2></div>
       <div class="card"><b>Total User</b><h2 id="users">Loading...</h2></div>
-      <!-- 6th KHALI -->
+      <div class="card"><b>Total Category</b><h2 id="totalCategory">Loading...</h2></div>
     </div>
 
-    <!-- TABLE - SIRF 3 ORDERS -->
+    <!-- TABLE - KHALI KAR DIYA - Orders sirf Orders wale page pe dikhenge -->
     <div class="box">
       <h2>Recent Orders</h2>
       <table>
         <tr><th>Order Id</th><th>Customer</th><th>Amount</th><th>Status</th></tr>
-        <tr><td>#101</td><td>Ali</td><td>$2000</td><td class="pending">Pending</td></tr>
-        <tr><td>#102</td><td>Omer</td><td>$200</td><td class="complete">Complete</td></tr>
-        <tr><td>#103</td><td>Saqib</td><td>$120</td><td class="cancel">Cancel</td></tr>
+        <tr><td colspan="4" style="text-align:center; color:grey; padding:20px;">Orders will show on Orders page</td></tr>
       </table>
     </div>
   </div>
@@ -150,17 +149,79 @@
 <script type="module">
     // firebase se cheezen mangwana - warna nahi chalega
     import { db, collection, getDocs } from "./config/firebase_config.js";
-    // users wali jagah ko pakarna - jahan number dikhana hai
+
+    // sab jagah ko pakarna
     let users = document.getElementById('users')
+    let totalCategory = document.getElementById('totalCategory')
+    let totalProducts = document.getElementById('totalProducts')
+    let totalOrders = document.getElementById('totalOrders')
+    let pendingOrders = document.getElementById('pendingOrders')
+    let completeOrders = document.getElementById('completeOrders')
+
     // function - saara kaam iske andar hoga
     async function getAllStats(){
-        // firebase me "users" folder ko kholna
-        const userRef = collection(db,"users")
-        // us folder ka saara data uthana - thora time lega
-        const data = await getDocs(userRef)
-        // gin ke number likh dena - 10 se zyada ho to 10+ likhna
-        users.innerText = data.docs.length > 10 ? "10+" : data.docs.length
+
+        // 1. USERS - firebase me "users" folder ka saara data uthana
+        let userRef = collection(db, "users")
+        let userData = await getDocs(userRef)
+
+        // for...of loop - ek ek user ko ginna
+        let userCount = 0
+        for(let user of userData.docs){
+            userCount = userCount + 1
+        }
+        // 10 se zyada hon to 10+ likhna
+        if(userCount > 10){
+            users.innerText = "10+"
+        } else {
+            users.innerText = userCount
+        }
+
+        // 2. CATEGORY COUNT - firebase me "categories" folder ginna
+        let catRef = collection(db, "categories")
+        let catData = await getDocs(catRef)
+
+        let catCount = 0
+        for(let cat of catData.docs){
+            catCount = catCount + 1
+        }
+        totalCategory.innerText = catCount
+
+        // 3. PRODUCTS COUNT - firebase me "products" folder ginna
+        let prodRef = collection(db, "products")
+        let prodData = await getDocs(prodRef)
+
+        let prodCount = 0
+        for(let prod of prodData.docs){
+            prodCount = prodCount + 1
+        }
+        totalProducts.innerText = prodCount
+
+        // 4. ORDERS COUNT - firebase me "orders" folder ginna
+        let orderRef = collection(db, "orders")
+        let orderData = await getDocs(orderRef)
+
+        let orderCount = 0
+        let pending = 0
+        let complete = 0
+
+        // for...of loop - ek ek order ko check karna
+        for(let order of orderData.docs){
+            orderCount = orderCount + 1
+            let s = (order.data().status || "").toLowerCase()
+            if(s == "pending"){
+                pending = pending + 1
+            }
+            if(s == "complete" || s == "completed"){
+                complete = complete + 1
+            }
+        }
+
+        totalOrders.innerText = orderCount
+        pendingOrders.innerText = pending
+        completeOrders.innerText = complete
     }
+
     // function ko chalana - warna kaam nahi hoga
     getAllStats()
 </script>

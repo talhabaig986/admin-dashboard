@@ -135,12 +135,12 @@
 
         if (editId) {
             // If editing, update old category
-            await updateDoc(doc(db, "Category", editId), { categoryName: name })
+            await updateDoc(doc(db, "categories", editId), { categoryName: name })
             editId = null
             catBtn.innerText = "Add Category"
         } else {
             // Add new category
-            let newDoc = doc(collection(db, "Category"))
+            let newDoc = doc(collection(db, "categories"))
             await setDoc(newDoc, {
                 categoryName: name,
                 categoryKey: newDoc.id,

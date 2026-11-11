@@ -188,7 +188,7 @@
         totalCategory.innerText = catCount
 
         // 3. PRODUCTS COUNT - firebase me "products" folder ginna
-        let prodRef = collection(db, "products")
+        let prodRef = collection(db, "Products")
         let prodData = await getDocs(prodRef)
 
         let prodCount = 0

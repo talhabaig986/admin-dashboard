@@ -25,30 +25,15 @@
   .top-row input{ flex: 1; }
   .add-box{ background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; }
   .add-box input, .add-box select{ padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; outline: none; flex: 1; min-width: 130px; }
-  .add-box input[type="file"]{ padding: 7px; background: #fafafa; }
   .add-btn{ background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; }
   .add-btn:hover{ background: #c0392b; }
+  #uploadLabel{ flex: 1; min-width: 130px; height: 44px; border: 1px dashed #bbb; border-radius: 6px; background: #fafafa; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; font-size: 15px; color: #555; }
+  #uploadLabel:hover{ border-color: #e74c3c; color: #e74c3c; }
+  #imgPreview{ width: 100%; height: 100%; object-fit: cover; display: none; }
   .box{ background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; flex: 1; overflow-y: auto; }
   table{ width: 100%; border-collapse: collapse; margin-top: 10px; }
   th, td{ border: 1px solid #ddd; padding: 10px; text-align: left; }
   th{ background: #ecf0f1; }
- #uploadLabel{
-  flex: 1;
-  min-width: 130px;
-  height: 44px;
-  border: 1px dashed #bbb;
-  border-radius: 6px;
-  background: #fafafa;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  overflow: hidden;
-  font-size: 15px;
-  color: #555;
-}
-#uploadLabel:hover{ border-color: #e74c3c; color: #e74c3c; }
-#imgPreview{ width: 100%; height: 100%; object-fit: cover; display: none; }
   td img{ width: 60px; height: 60px; border-radius: 5px; object-fit: cover; }
   .btn{ padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; color: white; font-size: 14px; }
   .view{ background: #3498db; }
@@ -57,7 +42,6 @@
   .no-data .icon{ font-size: 40px; display: block; margin-bottom: 10px; }
   .no-data h3{ color: #2c3e50; margin: 0 0 5px 0; font-size: 19px; }
   .no-data p{ margin: 0; font-size: 15px; }
-  #imgPreview{ width: 60px; height: 60px; object-fit: cover; border-radius: 5px; display: none; border: 1px solid #ddd; }
 </style>
 </head>
 <body>
@@ -88,11 +72,12 @@
       <select id="pCategory">
         <option value="">Select Category</option>
       </select>
-<label for="pImage" id="uploadLabel">
-  <span id="uploadText">📷 Upload Photo</span>
-  <img id="imgPreview">
-</label>
-<input type="file" id="pImage" accept="image/*" style="display:none">
+      <label for="pImage" id="uploadLabel">
+        <span id="uploadText">📷 Upload Product Photo</span>
+        <img id="imgPreview">
+      </label>
+      <input type="file" id="pImage" accept="image/*" style="display:none">
+      <button class="add-btn" id="addBtn">Add Product</button>
     </div>
 
     <div class="top-row">
@@ -127,6 +112,7 @@
   let pCategory = document.getElementById("pCategory")
   let pImage = document.getElementById("pImage")
   let imgPreview = document.getElementById("imgPreview")
+  let uploadText = document.getElementById("uploadText")
   let addBtn = document.getElementById("addBtn")
   let searchInput = document.getElementById("searchInput")
   let catFilter = document.getElementById("catFilter")
@@ -151,6 +137,7 @@
       selectedImage = e.target.result
       imgPreview.src = selectedImage
       imgPreview.style.display = "block"
+      uploadText.style.display = "none"
     }
     reader.readAsDataURL(file)
   })
@@ -177,14 +164,12 @@
     let price = pPrice.value
     let stock = pStock.value
     let category = pCategory.value
-
     let finalImage = selectedImage || oldImage
 
     if (name == "" || price == "" || stock == "" || category == "" || finalImage == "") {
       alert("Please fill all fields: Name, Price, Stock, Category aur Image lazmi hai")
       return
     }
-
     if (Number(price) <= 0 || Number(stock) < 0) {
       alert("Price 0 se zyada aur Stock 0 ya zyada hona chahiye")
       return
@@ -223,6 +208,7 @@
       oldImage = ""
       imgPreview.style.display = "none"
       imgPreview.src = ""
+      uploadText.style.display = "block"
 
       getProducts()
     }catch(e){
@@ -247,27 +233,21 @@
   function showProducts() {
     let searchText = searchInput.value.toLowerCase()
     let selectedCat = catFilter.value
-
     let filtered = []
     for (let p of allProducts) {
       let nameMatch = (p.productName || "").toLowerCase().indexOf(searchText) != -1
       let catMatch = selectedCat == "all" || p.category == selectedCat
-      if (nameMatch && catMatch) {
-        filtered.push(p)
-      }
+      if (nameMatch && catMatch) filtered.push(p)
     }
-
     if (filtered.length == 0) {
       productTable.style.display = "none"
       noData.style.display = "block"
       productList.innerHTML = ""
       return
     }
-
     productTable.style.display = "table"
     noData.style.display = "none"
     productList.innerHTML = ""
-
     for (let p of filtered) {
       productList.innerHTML += `
         <tr>
@@ -287,10 +267,7 @@
   window.editProduct = function(id) {
     let found = null
     for (let item of allProducts) {
-      if (item.id == id) {
-        found = item
-        break
-      }
+      if (item.id == id) { found = item; break }
     }
     if(!found) return
     pName.value = found.productName || ""
@@ -303,6 +280,7 @@
     if(oldImage){
       imgPreview.src = oldImage
       imgPreview.style.display = "block"
+      uploadText.style.display = "none"
     }
     editId = id
     addBtn.innerText = "Update Product"

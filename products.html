@@ -32,6 +32,23 @@
   table{ width: 100%; border-collapse: collapse; margin-top: 10px; }
   th, td{ border: 1px solid #ddd; padding: 10px; text-align: left; }
   th{ background: #ecf0f1; }
+ #uploadLabel{
+  flex: 1;
+  min-width: 130px;
+  height: 44px;
+  border: 1px dashed #bbb;
+  border-radius: 6px;
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  font-size: 15px;
+  color: #555;
+}
+#uploadLabel:hover{ border-color: #e74c3c; color: #e74c3c; }
+#imgPreview{ width: 100%; height: 100%; object-fit: cover; display: none; }
   td img{ width: 60px; height: 60px; border-radius: 5px; object-fit: cover; }
   .btn{ padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; color: white; font-size: 14px; }
   .view{ background: #3498db; }
@@ -71,9 +88,11 @@
       <select id="pCategory">
         <option value="">Select Category</option>
       </select>
-      <input type="file" id="pImage" accept="image/*">
-      <img id="imgPreview">
-      <button class="add-btn" id="addBtn">Add Product</button>
+<label for="pImage" id="uploadLabel">
+  <span id="uploadText">📷 Upload Photo</span>
+  <img id="imgPreview">
+</label>
+<input type="file" id="pImage" accept="image/*" style="display:none">
     </div>
 
     <div class="top-row">

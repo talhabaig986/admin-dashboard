@@ -28,7 +28,6 @@
   .top-row{ display: flex; gap: 10px; margin-bottom: 15px; }
   .top-row input{ flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; outline: none; background: white; }
 
-  /* Custom image button */
   .file-label{
     background:white;
     border:1px solid #ddd;
@@ -49,7 +48,6 @@
   .add-btn{ background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; }
   .add-btn:hover{ background: #c0392b; }
 
-  /* Update button green */
   .update-btn{ background:#27ae60 !important; }
   .update-btn:hover{ background:#1e8449 !important; }
 
@@ -97,7 +95,6 @@
     <div class="top-row">
       <input type="text" id="catName" placeholder="Enter Category Name">
 
-      <!-- Custom image button -->
       <label class="file-label">
         📷 <span id="fileText">Select Image</span>
         <input type="file" id="catImage" accept="image/*">
@@ -129,11 +126,6 @@
 <script type="module">
     import { db, collection, getDocs, doc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "./config/firebase_config.js";
 
-    // Image upload ke liye Firebase Storage
-    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-storage.js";
-
-    const storage = getStorage();
-
     let catName = document.getElementById("catName")
     let catImage = document.getElementById("catImage")
     let fileText = document.getElementById("fileText")
@@ -142,68 +134,55 @@
     let noData = document.getElementById("noData")
     let catTable = document.getElementById("catTable")
     let editId = null
+    let selectedImage = ""
+    let oldImage = ""
+    let allCategories = []
 
     catBtn.addEventListener("click", saveCategory)
 
-    // Image select karne par naam show karo
+    // Image select karo aur use text me convert karo
     catImage.addEventListener("change", function(){
-        if(catImage.files[0]){
-            fileText.innerText = catImage.files[0].name
-        }else{
-            fileText.innerText = "Select Image"
+        let file = catImage.files[0]
+        if(!file) return
+
+        let reader = new FileReader()
+        reader.onload = function(e){
+            selectedImage = e.target.result
+            fileText.innerText = file.name
         }
+        reader.readAsDataURL(file)
     })
 
     // Add or update category
     async function saveCategory() {
         let name = catName.value.trim()
-        let file = catImage.files[0]
+        let image = selectedImage || oldImage
 
         if (name == "") {
             alert("Please enter category name")
             return
         }
 
-        // Nayi category me image lazmi hai
-        if (!editId && !file) {
+        if (image == "") {
             alert("Please select category image")
             return
         }
 
         if (editId) {
-            // Edit me nayi image select ki hai to update karo
-            if (file) {
-                let imageRef = storageRef(storage, "categories/" + editId + "/" + file.name)
-                await uploadBytes(imageRef, file)
-                let imageUrl = await getDownloadURL(imageRef)
-
-                await updateDoc(doc(db, "Category", editId), {
-                    categoryName: name,
-                    imageUrl: imageUrl
-                })
-            } else {
-                // Sirf naam update karo
-                await updateDoc(doc(db, "Category", editId), {
-                    categoryName: name
-                })
-            }
+            await updateDoc(doc(db, "Category", editId), {
+                categoryName: name,
+                imageUrl: image
+            })
 
             editId = null
             catBtn.innerText = "Add Category"
             catBtn.classList.remove("update-btn")
         } else {
-            // Nayi category banao
             let newDoc = doc(collection(db, "Category"))
 
-            // Image upload karo
-            let imageRef = storageRef(storage, "categories/" + newDoc.id + "/" + file.name)
-            await uploadBytes(imageRef, file)
-            let imageUrl = await getDownloadURL(imageRef)
-
-            // Firestore me save karo
             await setDoc(newDoc, {
                 categoryName: name,
-                imageUrl: imageUrl,
+                imageUrl: image,
                 categoryKey: newDoc.id,
                 createdAt: serverTimestamp()
             })
@@ -211,6 +190,8 @@
 
         catName.value = ""
         catImage.value = ""
+        selectedImage = ""
+        oldImage = ""
         fileText.innerText = "Select Image"
         showCategory()
     }
@@ -219,6 +200,7 @@
     async function showCategory() {
         let data = await getDocs(collection(db, "Category"))
         catList.innerHTML = ""
+        allCategories = []
 
         if (data.docs.length == 0) {
             catTable.style.display = "none"
@@ -233,13 +215,19 @@
         for (let row of data.docs) {
             let d = row.data()
 
+            allCategories.push({
+                id: row.id,
+                categoryName: d.categoryName,
+                imageUrl: d.imageUrl || ""
+            })
+
             catList.innerHTML += `
                 <tr>
                     <td>${i}</td>
                     <td>${d.imageUrl ? `<img class="cat-img" src="${d.imageUrl}">` : "No Image"}</td>
                     <td>${d.categoryName}</td>
                     <td>
-                        <button class="btn view" onclick="editCategory('${row.id}','${d.categoryName}')">Edit</button>
+                        <button class="btn view" onclick="editCategory('${row.id}')">Edit</button>
                         <button class="btn del" onclick="deleteCategory('${row.id}')">Delete</button>
                     </td>
                 </tr>`
@@ -248,8 +236,19 @@
     }
 
     // Edit button
-    window.editCategory = function (id, name) {
-        catName.value = name
+    window.editCategory = function (id) {
+        let found = null
+
+        for (let item of allCategories) {
+            if (item.id == id) {
+                found = item
+                break
+            }
+        }
+
+        catName.value = found.categoryName
+        oldImage = found.imageUrl
+        selectedImage = ""
         catImage.value = ""
         fileText.innerText = "Select Image"
         editId = id

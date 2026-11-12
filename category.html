@@ -5,11 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>Category</title>
-<!-- Favicon - Browser tab me chota icon -->
 <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3081/3081559.png">
 <style>
 
-  /* ===== 1. POORA PAGE ===== */
   *{ box-sizing: border-box; }
   body{ margin: 0; font-family: Arial; background: #f2f2f2; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
   .wrapper{ display: flex; height: calc(100vh - 62px); overflow: hidden; flex: 1; }
@@ -17,11 +15,9 @@
   .main{ flex: 1; padding: 20px 30px; height: 100%; overflow-y: auto; display: flex; flex-direction: column; }
   h1{ margin-top: 0; margin-bottom: 15px; }
 
-  /* ===== 2. TOP BAR ===== */
   .top{ background: #2c3e50; color: white; padding: 10px 20px; font-size: 22px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; height: 62px; flex-shrink: 0; }
   .admin-img-top{ width: 42px; height: 42px; border-radius: 50%; background: white; padding: 2px; }
 
-  /* ===== 3. SIDEBAR ===== */
   .sidebar{ background: #34495e; width: 200px; height: 100%; display: flex; flex-direction: column; padding-top: 10px; overflow: hidden; flex-shrink: 0; }
   .sidebar a{ display: block; color: white; text-decoration: none; padding: 18px 15px; font-size: 18px; border-bottom: 1px solid #3d5a73; transition: 0.3s; }
   .sidebar a:hover{ background: #2c3e50; padding-left: 25px; border-left: 4px solid #3498db; }
@@ -29,26 +25,46 @@
   .logout-btn{ background: #7b1a1a !important; color: white; margin: auto 20px 15px 20px !important; padding: 12px !important; text-align: center; display: block; text-decoration: none; font-size: 18px; border-radius: 6px; border-bottom: none !important; border-left: none !important; }
   .logout-btn:hover{ background: red !important; padding-left: 12px !important; border-left: none !important; }
 
-  /* ===== 4. ADD CATEGORY ROW ===== */
   .top-row{ display: flex; gap: 10px; margin-bottom: 15px; }
-  .top-row input{ flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; outline: none; }
+  .top-row input{ flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; outline: none; background: white; }
+
+  /* Custom image button */
+  .file-label{
+    background:white;
+    border:1px solid #ddd;
+    border-radius:6px;
+    padding:10px 14px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:16px;
+    white-space:nowrap;
+  }
+
+  .file-label input{
+    display:none;
+  }
+
   .add-btn{ background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; }
   .add-btn:hover{ background: #c0392b; }
 
-  /* ===== 5. WHITE BOX ===== */
+  /* Update button green */
+  .update-btn{ background:#27ae60 !important; }
+  .update-btn:hover{ background:#1e8449 !important; }
+
   .box{ background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; flex: 1; overflow-y: auto; }
 
-  /* ===== 6. TABLE ===== */
   table{ width: 100%; border-collapse: collapse; margin-top: 10px; }
   th, td{ border: 1px solid #ddd; padding: 10px; text-align: left; }
   th{ background: #ecf0f1; }
 
-  /* ===== 7. BUTTON ===== */
+  .cat-img{ width: 60px; height: 45px; object-fit: cover; border-radius: 6px; }
+
   .btn{ padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; color: white; font-size: 14px; }
   .view{ background: #3498db; }
   .del{ background: #e74c3c; }
 
-  /* ===== 8. NO CATEGORY MESSAGE ===== */
   .no-data{ text-align: center; padding: 40px 10px; color: #777; display: none; }
   .no-data .icon{ font-size: 40px; display: block; margin-bottom: 10px; }
   .no-data h3{ color: #2c3e50; margin: 0 0 5px 0; font-size: 19px; }
@@ -58,16 +74,13 @@
 </head>
 <body>
 
-<!-- ===== 1. TOP BAR ===== -->
 <div class="top">
   <span>Category</span>
   <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="admin-img-top">
 </div>
 
-<!-- ===== 2. WRAPPER START ===== -->
 <div class="wrapper">
 
-  <!-- ===== 3. SIDEBAR ===== -->
   <div class="sidebar">
     <a href="dashboard.html">🏠 Home</a>
     <a href="orders.html">📦 Orders</a>
@@ -78,25 +91,29 @@
     <a href="index.html" class="logout-btn">🚪 Logout</a>
   </div>
 
-  <!-- ===== 4. MAIN START ===== -->
   <div class="main">
     <h1>All Categories</h1>
 
-    <!-- 4.1 ADD CATEGORY -->
     <div class="top-row">
       <input type="text" id="catName" placeholder="Enter Category Name">
+
+      <!-- Custom image button -->
+      <label class="file-label">
+        📷 <span id="fileText">Select Image</span>
+        <input type="file" id="catImage" accept="image/*">
+      </label>
+
       <button class="add-btn" id="catBtn">Add Category</button>
     </div>
 
-    <!-- 4.2 TABLE BOX -->
     <div class="box">
       <h2 style="margin:0; font-size:19px;">Total Category</h2>
+
       <table id="catTable">
-        <tr><th>S.no</th><th>Category Name</th><th>Action</th></tr>
+        <tr><th>S.no</th><th>Image</th><th>Category Name</th><th>Action</th></tr>
         <tbody id="cat"></tbody>
       </table>
 
-      <!-- Jab koi category na ho to ye dikhega -->
       <div class="no-data" id="noData">
         <span class="icon">🛍️</span>
         <h3>No Categories Found</h3>
@@ -106,16 +123,20 @@
     </div>
 
   </div>
-  <!-- ===== MAIN END ===== -->
 
 </div>
-<!-- ===== WRAPPER END ===== -->
 
 <script type="module">
-    // FIX - Ab dashboard wali hi config use hogi, dobara initialize nahi karenge
     import { db, collection, getDocs, doc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "./config/firebase_config.js";
 
+    // Image upload ke liye Firebase Storage
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-storage.js";
+
+    const storage = getStorage();
+
     let catName = document.getElementById("catName")
+    let catImage = document.getElementById("catImage")
+    let fileText = document.getElementById("fileText")
     let catBtn = document.getElementById("catBtn")
     let catList = document.getElementById("cat")
     let noData = document.getElementById("noData")
@@ -124,57 +145,98 @@
 
     catBtn.addEventListener("click", saveCategory)
 
+    // Image select karne par naam show karo
+    catImage.addEventListener("change", function(){
+        if(catImage.files[0]){
+            fileText.innerText = catImage.files[0].name
+        }else{
+            fileText.innerText = "Select Image"
+        }
+    })
+
     // Add or update category
     async function saveCategory() {
         let name = catName.value.trim()
+        let file = catImage.files[0]
 
         if (name == "") {
             alert("Please enter category name")
             return
         }
 
+        // Nayi category me image lazmi hai
+        if (!editId && !file) {
+            alert("Please select category image")
+            return
+        }
+
         if (editId) {
-            // If editing, update old category
-            await updateDoc(doc(db, "Category", editId), { categoryName: name })
+            // Edit me nayi image select ki hai to update karo
+            if (file) {
+                let imageRef = storageRef(storage, "categories/" + editId + "/" + file.name)
+                await uploadBytes(imageRef, file)
+                let imageUrl = await getDownloadURL(imageRef)
+
+                await updateDoc(doc(db, "Category", editId), {
+                    categoryName: name,
+                    imageUrl: imageUrl
+                })
+            } else {
+                // Sirf naam update karo
+                await updateDoc(doc(db, "Category", editId), {
+                    categoryName: name
+                })
+            }
+
             editId = null
             catBtn.innerText = "Add Category"
+            catBtn.classList.remove("update-btn")
         } else {
-            // Add new category
+            // Nayi category banao
             let newDoc = doc(collection(db, "Category"))
+
+            // Image upload karo
+            let imageRef = storageRef(storage, "categories/" + newDoc.id + "/" + file.name)
+            await uploadBytes(imageRef, file)
+            let imageUrl = await getDownloadURL(imageRef)
+
+            // Firestore me save karo
             await setDoc(newDoc, {
                 categoryName: name,
+                imageUrl: imageUrl,
                 categoryKey: newDoc.id,
-                createdAt: serverTimestamp() // Save time when category was created
+                createdAt: serverTimestamp()
             })
         }
 
         catName.value = ""
+        catImage.value = ""
+        fileText.innerText = "Select Image"
         showCategory()
     }
 
-    // Show all categories
+    // Saari categories show karo
     async function showCategory() {
         let data = await getDocs(collection(db, "Category"))
         catList.innerHTML = ""
 
-        // Agar koi category nahi hai to message dikhao, table chupao
         if (data.docs.length == 0) {
             catTable.style.display = "none"
             noData.style.display = "block"
             return
         }
 
-        // Agar category hai to table dikhao, message chupao
         catTable.style.display = "table"
         noData.style.display = "none"
 
         let i = 1
-        // for...of loop - ek ek category ko dikhana
         for (let row of data.docs) {
             let d = row.data()
+
             catList.innerHTML += `
                 <tr>
                     <td>${i}</td>
+                    <td>${d.imageUrl ? `<img class="cat-img" src="${d.imageUrl}">` : "No Image"}</td>
                     <td>${d.categoryName}</td>
                     <td>
                         <button class="btn view" onclick="editCategory('${row.id}','${d.categoryName}')">Edit</button>
@@ -188,8 +250,11 @@
     // Edit button
     window.editCategory = function (id, name) {
         catName.value = name
+        catImage.value = ""
+        fileText.innerText = "Select Image"
         editId = id
         catBtn.innerText = "Update Category"
+        catBtn.classList.add("update-btn")
     }
 
     // Delete button
